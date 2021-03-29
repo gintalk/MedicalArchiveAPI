@@ -8,6 +8,7 @@ package com.vgu.cs.ma.api.server;
  */
 
 import com.vgu.cs.common.web.WebServer;
+import com.vgu.cs.ma.api.handler.ApiHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.servlet.ServletHandler;
 
@@ -16,6 +17,9 @@ import java.util.function.Consumer;
 public class ApiServer extends WebServer {
     public ApiServer(String name) {
         super(name);
+
+        Handler handler = createHandler(this::setupHandler);
+        setup(handler);
     }
 
     private Handler createHandler(Consumer<ServletHandler> setupHandler) {
@@ -26,6 +30,6 @@ public class ApiServer extends WebServer {
     }
 
     private void setupHandler(ServletHandler handler) {
-        handler.addServletWithMapping("ApiHandler", "/*");
+        handler.addServletWithMapping(ApiHandler.class, "/*");
     }
 }

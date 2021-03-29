@@ -25,10 +25,17 @@ public class ApiHandler extends VApiHandler {
     private static final Logger LOGGER = VLogger.getLogger(ApiHandler.class);
     private static final Map<String, VModel<IRequest>> MODEL_MAP = new HashMap<>();
 
+    public static synchronized void registerModel(String container, String group, String version, VModel<IRequest> model) {
+        MODEL_MAP.put(_getModelName(container, group, version), model);
+    }
+
+    private static String _getModelName(String container, String group, String version) {
+        return container + "." + group + "." + version;
+    }
+
     @Override
     protected void doHandle(HttpServletRequest req, HttpServletResponse res) {
         String path = req.getPathInfo();
-
         VPath apiPath = new VPath(path);
         if (!apiPath.isValid()) {
             LOGGER.error(LoggingUtils.buildLog("Invalid API path", apiPath));
@@ -48,9 +55,5 @@ public class ApiHandler extends VApiHandler {
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
         }
-    }
-
-    private String _getModelName(String container, String group, String version) {
-        return container + "." + group + "." + version;
     }
 }
